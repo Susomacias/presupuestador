@@ -250,7 +250,7 @@ export class ArticleDetailComponent implements OnInit {
       total += Number.parseFloat(el.value);
     });
     this.row.price = total;
-    this.row.total=(this.row.price+((this.row.tax * this.row.price) / 100))
+    this.row.total=(this.row.price+((this.row.tax * this.row.price) / 100))*this.row.amount;
     this.loading = false;
   }
 

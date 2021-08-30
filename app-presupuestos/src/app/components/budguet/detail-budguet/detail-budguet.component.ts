@@ -69,6 +69,7 @@ export class DetailBudguetComponent implements OnInit {
   public data_client;
   public pdf_row;
   public pdf_columns;
+  public total;
 
   public budguet_price: number;
   public budguet_tax: number;
@@ -83,7 +84,7 @@ export class DetailBudguetComponent implements OnInit {
     const data = await this.Rows();
 
 
-    pdf.add(await new Img(this.user.image).fit([120, 50]).build());
+   // pdf.add(await new Img(this.user.image).fit([120, 50]).build());
     pdf.add(this.data());
     pdf.add(new Table([[(new Txt(["\n", "\n", "\n", "\n", "\n", "\n",]).end)],]).layout('noBorders').end);
     pdf.add(new Table([[
@@ -196,6 +197,21 @@ export class DetailBudguetComponent implements OnInit {
 
 
   getBudguetRows() {
+    this.client = JSON.parse(localStorage.getItem('client-detail'));
+    if(!this.client){
+      localStorage.setItem('client-detail', JSON.stringify(
+       { 'id': 1,
+        'user_id':1,
+        'name':'Nombre',
+        'email':'email',
+        'phone':'Telefono',
+        'address':'Dirección',
+        'data':'datos',
+        'observations':'observaciones',
+        'favorite':'not',}
+      ));
+      this.data_client = JSON.parse(localStorage.getItem('client-detail'));
+    }
     let id = { "id": this.id };
     this._rowsByBudguetService.getList(this.token, id).subscribe(
       response => {
@@ -206,12 +222,12 @@ export class DetailBudguetComponent implements OnInit {
         this.sum = JSON.stringify(this.rows);   
         let json = this.sum;
         let data = JSON.parse(json);
-        this.price = 0;
+        this.total = 0;
         for (let x in data) {
-          this.price += data[x].price;
+          this.total += data[x].total;
         }
-        this.budguet.price = this.price;
-        this.budguet.total = ((this.budguet.price * this.budguet.tax)/100)+this.price;
+        this.budguet.price = this.total;
+        this.budguet.total = ((this.budguet.price * this.budguet.tax)/100)+this.total;
       }, error => {
         console.error(error);
         this.status = "error";
@@ -306,7 +322,6 @@ export class DetailBudguetComponent implements OnInit {
         this.budguet = JSON.parse(localStorage.getItem('budguet-detail'));
         this.status = "success";
         let budguet = JSON.parse(localStorage.getItem('budguet-detail'));
-        console.log(budguet);
         this.getBudguetRows();
         let client_id = budguet.client_id;
         if (client_id != null) {
@@ -373,11 +388,11 @@ export class DetailBudguetComponent implements OnInit {
     this.sum = localStorage.getItem('row-' + this.id_budguet + '-list');   
     let json = this.sum;
     let data = JSON.parse(json);
-    this.price = 0;
+    this.total = 0;
     for (let x in data) {
-      this.price += data[x].price;
+      this.total += data[x].total;
     }
-    this.budguet.price = this.price;
+    this.budguet.price = this.total;
   }
 
   saveAndClose(form) {
@@ -401,6 +416,6 @@ export class DetailBudguetComponent implements OnInit {
   }
 
   taxCalc(){
-    this.budguet.total = ((this.budguet.price * this.budguet.tax)/100)+this.price;
+    this.budguet.total = ((this.budguet.price * this.budguet.tax)/100)+this.total;
   }
 }

@@ -1226,7 +1226,7 @@
                                 <label for="row_total">Importe Total</label>
                                 <div class="input-group mb-3">
                                     <input type="number" name="row_total" class="form-control" #subject="ngModel"
-                                        value="{{row.amount * row.total}}" [(ngModel)]="row.total"
+                                        value="{{row.amount * (((row.price*row.tax)/100)+row.price)}}" [(ngModel)]="row.total"
                                         aria-describedby="basic-addon2" style="text-align: right;" disabled>
                                     <div class="input-group-append">
                                         <span class="input-group-text" id="basic-addon2">{{user.coin}}</span>
