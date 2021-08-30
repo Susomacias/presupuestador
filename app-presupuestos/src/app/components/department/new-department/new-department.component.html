@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 20px;">
+        <div>
+            <h1>{{page_title}}</h1>
+            <p *ngIf="status != 'success'">
+                Crear un departamento 
+            </p>
+
+            <div class="alert alert-success" *ngIf="status == 'success'">
+                Departamento creado correctamente. <a [routerLink]="['/home']"> Volver a Inicio</a>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="status=='error'">
+                El mensaje no se ha enviado.
+            </div>
+
+            <!--Formulario de contacto-->
+            <form #newdepartmentForm="ngForm" (ngSubmit)="onSubmit(newdepartmentForm)">
+
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" name="nombre" class="form-control" #subject="ngModel" 
+                    [(ngModel)]="department.name" required>
+                    <small class="text-secondary"><i>Ejemplos: Fontanería, Pintura o Carpintería</i></small>
+                    <small *ngIf="!subject.valid && subject.touched" class="invalid-feedback d-block">
+                        Es necesario poner un nombre valido
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción (opcional)</label>
+                    <textarea rows="5" name="descripcion" class="form-control" #subject="ngModel" 
+                    [(ngModel)]="department.description"></textarea>
+                </div>
+
+                <input type="submit" value="Enviar" class="btn btn-success" [disabled]="newdepartmentForm.invalid" />
+            </form>
+        </div>
+    </div>
+</div>

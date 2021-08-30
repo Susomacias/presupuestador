@@ -1,0 +1,203 @@
+<div class="container">
+    <div class="justify-content-center" style="margin-top: 20px;">
+        <div>
+            <h1>{{page_title}}</h1>
+
+            <!--Formulario de contacto-->
+            <form #newbudguetForm="ngForm" (ngSubmit)="onSubmit(newbudguetForm)">
+
+                <div class="form-group">
+                    <label for="name">Referencia</label>
+                    <input type="text" name="nombre" value="{{budguet.name}}" class="form-control" #subject="ngModel"
+                        [(ngModel)]="budguet.name">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Observaciones</label>
+                    <textarea rows="5" name="descripcion" class="form-control" #subject="ngModel"
+                        [(ngModel)]="budguet.description">{{budguet.description}}</textarea>
+                </div>
+
+
+                <div class="p-2 bd-highlight mt-lg-4">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            Cliente
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <mat-form-field class="example-full-width" appearance="fill">
+                                    <mat-label>Selecciona un cliente</mat-label>
+                                    <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto"
+                                        [(ngModel)]="budguet.client_id">
+                                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCompany.bind(this)">
+                                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id"
+                                            (input)="updateBudguet({
+                                        'id': budguet.id,
+                                        'user_id': budguet.user_id,
+                                        'client_id': option.id,
+                                        'name': budguet.name,
+                                        'description': budguet.description,
+                                        'price': budguet.price,
+                                        'tax': user.taxes,
+                                        'total': budguet.total
+                                    })">
+                                            {{option.name}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+
+                                <button name="EDIT" class="btn btn-warning  btn-sm ml-2" data-toggle="modal"
+                                    [attr.data-target]="'#editClientModal'+budguet.client_id" (click)="getClient()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                        <path
+                                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                        <path fill-rule="evenodd"
+                                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                    </svg>
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="{{'editClientModal'+ budguet.client_id}}" tabindex="-1"
+                                    aria-labelledby="editClientModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editClientModalLabel">Editar Cliente</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Puedes actualizar los datos del cliente: <b>{{client.name}}</b>
+
+                                                <div class="d-flex flex-column bd-highlight mb-3 mt-2">
+                                                    <div>
+                                                        <!--Formulario-->
+                                                        <form #updateclientForm="ngForm"
+                                                            (ngSubmit)="updateClient(updateclientForm)">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="p-2 flex-fill bd-highlight">
+                                                                    <div class="form-group">
+                                                                        <label for="NAME">Nombre</label>
+                                                                        <input type="text" name="name"
+                                                                            class="form-control" #name="ngModel"
+                                                                            [(ngModel)]="
+                                                        client.name" required>
+                                                                        <small *ngIf="!name.valid && name.touched"
+                                                                            class="invalid-feedback d-block">
+                                                                            El nombre no es válido
+                                                                        </small>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label for="EMAIL">Email</label>
+                                                                        <input type="email" name="email"
+                                                                            class="form-control" #email="ngModel"
+                                                                            [(ngModel)]="
+                                                        client.email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+                                                                        <small *ngIf="!email.valid && email.touched"
+                                                                            class="invalid-feedback d-block">
+                                                                            El correo no es válido
+                                                                        </small>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label for="PHONE">Teléfono</label>
+                                                                        <input type="tel" name="phone"
+                                                                            class="form-control" #phone="ngModel"
+                                                                            [(ngModel)]="
+                                                        client.phone" pattern="[0-9]+">
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label for="ADDRESS">Dirección</label>
+                                                                        <textarea type="text" name="address"
+                                                                            class="form-control" #address="ngModel"
+                                                                            [(ngModel)]="client.address">
+                                                        </textarea>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="p-2 flex-fill bd-highlight">
+                                                                    <div class="form-group">
+                                                                        <label for="DATA">Datos Fiscales</label>
+                                                                        <textarea type="text" name="data"
+                                                                            class="form-control" #address="ngModel"
+                                                                            [(ngModel)]="client.data">
+                                                        </textarea>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label for="OBSERVATIONS">Observaciones</label>
+                                                                        <textarea type="text" name="observations"
+                                                                            class="form-control" #observations="ngModel"
+                                                                            [(ngModel)]="client.observations">
+                                                        </textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex justify-content-end">
+                                                                <button class="btn btn-secondary mt-2 mb-3 ml-2"
+                                                                    data-dismiss="modal">Cerrar</button>
+
+                                                                <button class="btn btn-danger mt-2 ml-2 form-group"
+                                                                    data-dismiss="modal" data-backdrop="false"
+                                                                    type="submit" (click)="updateClient(client)">
+                                                                    Actualizar
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mb-2 ml-auto mr-auto" data-toggle="modal"
+                                data-target="#createclientModal">
+                                NUEVO CLIENTE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="createclientModal" tabindex="-1" aria-labelledby="createclientModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-dark" id="createModalLabel">Cear Nuevo Cliente</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-dark">
+                                <app-new-client></app-new-client>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                    (click)="getClients()">Cerrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <input type="submit" value="Enviar" class="btn btn-success" [disabled]="newbudguetForm.invalid"
+                    value="{{(loading) ? 'Guardando...' : 'Añadir Presupuesto'}}"/>
+                    <div *ngIf="message==true">
+                        <a class="btn btn-primary mt-3" [routerLink]="['/articulos']"> Agrergar Articulos al Presupuesto</a>
+                    </div>
+                </div>
+             
+                
+            </form>
+        </div>
+    </div>
+</div>

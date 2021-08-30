@@ -1,0 +1,1256 @@
+<div class="container-fluid mt-3">
+    <div class="row no-gutters">
+        <div class="p-1 col-sm-6 col-md-3">
+            <button type="button" class="btn btn-primary btn-block" [routerLink]="['/nuevo-elemento']">
+                + Nuevo elemento
+            </button>
+            <hr>
+            <form class="list-group mt-3">
+                <span class="p-2 bg-secondary text-white h5">
+                    Lista de Elementos:
+                </span>
+                <div *ngFor="let element of elements">
+                    <button type="submit" (click)="addFeature({'id':element.id,'article_id':article_id})"
+                        class="list-group-item list-group-item-action">
+                        {{element.name}}
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!----FORMULARIOS---------------------------------------------------------->
+        <div class="p-1 col-sm-6 col-md-6">
+         
+            <div class="text-center mb-3 p-2 bg-secondary text-white h5">
+                Articulo: {{article.name}}
+            </div>
+
+            <div *ngIf="!article.name">
+                <div class="mt-5 text-center">
+                    <div class="spinner-border" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <p>Cargando elementos...</p>
+                    </div>
+                  </div>
+            </div>
+
+            <div *ngIf="loading == true">
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="sr-only">Actualizando elementos...</span>
+                </div>
+                <small class="text-muted">Actualizando elementos...</small>
+            </div>
+
+            <div *ngIf="features && features.length==0" class="text-center">
+                <h2> No tienes elementos en este Articulo.</h2>
+                <p class="alert-warning h5 p-2 ml-5 mr-5"> Añade un elemento de la Lista haciendo click sobre él</p>
+                <p>O crea un <a [routerLink]="['/nuevo-elemento']">Nuevo elemento</a></p>
+            </div>
+
+            <div *ngFor="let feature of features" class="mb-2">
+                <mat-accordion>
+                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                {{feature.name}}
+                            </mat-panel-title>
+                            <div *ngIf="feature.description != null">
+                                <mat-panel-description>
+                                    {{feature.description.slice(0,19)}}
+                                    <span *ngIf="feature.description.slice(0,19)!=feature.description">...</span>
+                                </mat-panel-description>
+                            </div>
+                            <mat-icon class="mr-2 text-secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path
+                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                    <path fill-rule="evenodd"
+                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                </svg>
+                            </mat-icon>
+                        </mat-expansion-panel-header>
+                        <p>{{feature.description}}</p>
+                        <div *ngIf="!feature.surface_height && !feature.coil_width">
+                            <form #newfeatureUNITForm="ngForm">
+
+                                <div class="d-flex flex-wrap">
+                                    <div class="p-2 flex-fill bd-highlight">
+                                        <div class="form-group">
+                                            <label for="name">Nombre <small *ngIf="newfeatureUNITForm.invalid"
+                                                    class="text-danger">(Obligatorio)</small></label>
+                                            <input type="text" name="nombre" class="form-control" #subject="ngModel"
+                                                [(ngModel)]="feature.name" required>
+                                            <small *ngIf="!subject.valid && subject.touched"
+                                                class="invalid-feedback d-block">
+                                                Es necesario poner un nombre valido
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="description">Descripción</label>
+                                            <textarea rows="5" name="descripcion" class="form-control"
+                                                #subject="ngModel" [(ngModel)]="feature.description"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-2 flex-fill bd-highlight ml-md-5">
+                                        <div class="d-flex flex-wrap">
+                                            <div class="flex-grow-2 bd-highlight">
+                                                <div class="form-group">
+                                                    <label for="unit_amount">Cantidad <small
+                                                            *ngIf="newfeatureUNITForm.invalid"
+                                                            class="text-danger">(Obligatorio)</small></label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="unit_amount" class="form-control"
+                                                            #uamount="ngModel" [(ngModel)]="feature.unit_amount"
+                                                            aria-describedby="basic-addon2" style="text-align: right;"
+                                                            required (change)="addUp('add')">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2"
+                                                                style="background-color: white;">{{feature.unit_measurement}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-wrap">
+                                            <div class="flex-grow-2 bd-highlight">
+                                                <div class="form-group">
+                                                    <label for="unit_costprice">Coste Unitario</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="unit_costprice" class="form-control"
+                                                            #subject="ngModel" aria-describedby="basic-addon2"
+                                                            [(ngModel)]="feature.unit_costprice"
+                                                            style="text-align: right;" (change)="addUp('add')">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2"
+                                                                style="background-color: white;">{{user.coin}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-grow-2 bd-highlight ml-md-2">
+                                                <div class="form-group">
+                                                    <label for="unit_profitpercentage">Porcentaje de beneficio
+                                                        (%)</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="unit_profitpercentage"
+                                                            class="form-control" #subject="ngModel"
+                                                            style="text-align: right;"
+                                                            [(ngModel)]="feature.unit_profitpercentage"
+                                                            aria-describedby="basic-addon2" (change)="addUp('add')">
+
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2"
+                                                                style="background-color: white;">%</span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-grow-2 bd-highlight ml-md-2">
+                                                <div class="form-group">
+                                                    <label for="unit_price">Total</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="unit_price" class="add form-control"
+                                                            #subject="ngModel"
+                                                            value="{{feature.unit_costprice + ((feature.unit_profitpercentage * feature.unit_costprice) / 100) }}"
+                                                            [(ngModel)]="feature.unit_price"
+                                                            aria-describedby="basic-addon2" style="text-align: right;"
+                                                            disabled (change)="addUp('add')">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text"
+                                                                id="basic-addon2">{{user.coin}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="text-right">
+                                <button name="UPDATE" class="btn btn-warning btn-sm ml-2" data-toggle="modal"
+                                    [attr.data-target]="'#updateFeature'+feature.id" (click)="updateFeature({
+                                    'id':feature.id,
+                                    'user_id':feature.user_id,
+                                    'article_id':feature.article_id,		
+                                    'name':feature.name,
+                                    'description':feature.description,
+                                    'unit_amount':feature.unit_amount,
+                                    'unit_measurement':feature.unit_measurement,
+                                    'unit_costprice':feature.unit_costprice,
+                                    'unit_profitpercentage':feature.unit_profitpercentage,
+                                    'unit_price':feature.unit_price,
+                                    'surface_multiple':feature.surface_multiple,
+                                    'surface_multiple_amount':feature.surface_multiple_amount,
+                                    'surface_height':feature.surface_height,
+                                    'surface_width':feature.surface_width,
+                                    'surface_layout':feature.surface_layout,
+                                    'surface_article_height':feature.surface_article_height,
+                                    'surface_article_width':feature.surface_article_width,
+                                    'surface_article_layout':feature.surface_article_layout,
+                                    'surface_itens':feature.surface_itens,
+                                    'surface_total_surfaces':feature.surface_total_surfaces,
+                                    'surface_whole':feature.surface_whole,
+                                    'surface_surcharge_item':feature.surface_surcharge_item,
+                                    'surface_individual_cost':feature.surface_individual_cost,
+                                    'surface_costprice':feature.surface_costprice,
+                                    'surface_profitpercentage':feature.surface_profitpercentage,
+                                    'surface_price':feature.surface_price,
+                                    'coil_width':feature.coil_width,
+                                    'coil_article_height':feature.coil_article_height,
+                                    'coil_article_width':feature.coil_article_width,
+                                    'coil_article_layout':feature.coil_article_layout,
+                                    'coil_articles_amount':feature.coil_articles_amount,
+                                    'coil_total_measure':feature.coil_total_measure,
+                                    'coil_surcharge_item':feature.coil_surcharge_item,
+                                    'coil_measured_cost':feature.coil_measured_cost,
+                                    'coil_costprice':feature.coil_costprice,
+                                    'coil_profitpercentage':feature.coil_profitpercentage,
+                                    'coil_price':feature.coil_price
+
+                                })"> Guardar Cambios para este artículo
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-save-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v7.793L4.854 6.646a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0-.708-.708L8.5 9.293V1.5z" />
+                                    </svg>
+                                </button>
+
+                                <button name="DELETE" class="btn btn-danger btn-sm ml-2" data-toggle="modal"
+                                    [attr.data-target]="'#deleteFeature'+feature.id"> Borrar de la lista
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="modal" id="{{'deleteFeature'+ feature.id}}" tabindex="-1"
+                                aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Eliminar Elemento</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Estás a punto de eliminar permanentemente el elemento:
+                                            <b>{{feature.name}}</b>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                No deseo eliminar
+                                            </button>
+                                            <form #deleteArticleForm="ngForm"
+                                                (ngSubmit)="deleteFeature(deleteFeatureForm)">
+                                                <button class="btn btn-danger mt-3 form-group" data-dismiss="modal"
+                                                    data-backdrop="false" type="button"
+                                                    (click)="deleteFeature(feature)">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="feature.surface_height">
+                            <form #newfeatureSURFACEForm="ngForm">
+
+                                <div class="d-flex flex-wrap">
+                                    <div class="p-2 flex-fill bd-highlight">
+                                        <div class="form-group">
+                                            <label for="name">Nombre <small *ngIf="newfeatureSURFACEForm.invalid"
+                                                    class="text-danger">(Obligatorio)</small> </label>
+                                            <input type="text" name="nombre" class="form-control" #subject="ngModel"
+                                                [(ngModel)]="feature.name" required>
+                                            <small *ngIf="!subject.valid && subject.touched"
+                                                class="invalid-feedback d-block">
+                                                Es necesario poner un nombre valido
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="description">Descripción</label>
+                                            <textarea rows="5" name="descripcion" class="form-control"
+                                                #subject="ngModel" [(ngModel)]="feature.description"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="p-2 flex-fill bd-highlight">
+
+                                        <div class="form-group">
+                                            <label for="surface_amount">Cantidad de artículos</label>
+                                            <input type="number" name="surface_amount" class="form-control"
+                                                #subject="ngModel" [(ngModel)]="feature.unit_amount"
+                                                style="text-align: right;" (change)="addUp('add')">
+                                        </div>
+
+                                        <hr>
+
+                                        <p *ngIf="feature.surface_multiple_amount==null">
+                                            Superficies procesadas a la vez: 1
+                                        </p>
+
+                                        <p *ngIf="feature.surface_multiple_amount!=null">
+                                            Superficies procesadas a la vez: {{feature.surface_multiple_amount}}
+                                        </p>
+
+                                        <hr>
+
+                                        <div class="card text-center">
+                                            <h3 class="card-header">
+                                                <b>Tamaño de la superficie</b>
+                                            </h3>
+                                            <div class="card-body">
+                                                <div class="d-flex flex-row justify-content-center">
+                                                    <div class="p-2 mr-3">
+                                                        <div class="form-group">
+                                                            <label for="surface_width">Ancho de superficie</label>
+                                                            <div class="input-group mb-3">
+                                                                <input type="number" aria-describedby="basic-addon2"
+                                                                    name="surface_width" class="form-control"
+                                                                    #swidth="ngModel" style="text-align: right;"
+                                                                    [(ngModel)]="feature.surface_width" required
+                                                                    disabled (change)="addUp('add')">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon2">{{feature.unit_measurement}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <div class="form-group">
+                                                            <label for="surface_height">Alto de superficie</label>
+                                                            <div class="input-group mb-3">
+                                                                <input type="number" aria-describedby="basic-addon2"
+                                                                    name="surface_height" class="form-control"
+                                                                    #sheight="ngModel" style="text-align: right;"
+                                                                    [(ngModel)]="feature.surface_height" required
+                                                                    disabled (change)="addUp('add')">
+
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon2">{{feature.unit_measurement}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex flex-row justify-content-center">
+                                                    <div class="p-2 text-left">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="SurfaceSizeOptions" id="SurfaceSize1"
+                                                                value="horizontal" #slayout="ngModel"
+                                                                [(ngModel)]="feature.surface_layout" checked disabled>
+                                                            <label class="form-check-label"
+                                                                for="SurfaceSize1">Horizontal</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="SurfaceSizeOptions" id="SurfaceSize2"
+                                                                value="vertical" #slayout="ngModel"
+                                                                [(ngModel)]="feature.surface_layout" disabled>
+                                                            <label class="form-check-label"
+                                                                for="SurfaceSize2">Vertical</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-2 text-left">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="swhole" value="" id="swhole" #slayout="ngModel"
+                                                                [(ngModel)]="feature.surface_whole" disabled>
+                                                            <label class="form-check-label" for="swhole">
+                                                                Añadir el material sobrante al coste <br>
+                                                                <small>(Para calcular usando solo planchas
+                                                                    enteras)</small>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="card text-center">
+                                            <h3 class="card-header">
+                                                <b>Tamaño del Artículo</b>
+                                            </h3>
+                                            <div class="card-body">
+                                                <div class="d-flex flex-row justify-content-center">
+                                                    <div class="p-2 mr-3">
+                                                        <div class="form-group">
+                                                            <label for="surface_article_width">Ancho del
+                                                                Artículo</label>
+                                                            <div class="input-group mb-3">
+                                                                <input type="number" aria-describedby="basic-addon2"
+                                                                    name="surface_article_width" class="form-control"
+                                                                    #subject="ngModel" style="text-align: right;"
+                                                                    [(ngModel)]="feature.surface_article_width"
+                                                                    (change)="addUp('add')">
+
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text" id="basic-addon2"
+                                                                        style="background-color: white;">{{feature.unit_measurement}}</span>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <div class="form-group">
+                                                            <label for="surface_height">Alto del Artículo</label>
+                                                            <div class="input-group mb-3">
+                                                                <input type="number" aria-describedby="basic-addon2"
+                                                                    name="surface_article_height" class="form-control"
+                                                                    #subject="ngModel"
+                                                                    [(ngModel)]="feature.surface_article_height"
+                                                                    style="text-align: right;" (change)="addUp('add')">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text" id="basic-addon2"
+                                                                        style="background-color: white;">{{feature.unit_measurement}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="card text-center">
+                                            <h3 class="card-header">
+                                                <b>Resultado del calculo de superficie</b>
+                                            </h3>
+                                            <div class="card-body">
+                                                <div class="d-flex flex-row justify-content-center">
+                                                    <div class="p-2 mr-3">
+                                                        <div class="form-group">
+                                                            <label for="surface_itens">Articulos que entran en una
+                                                                superficie</label>
+                                                            <input type="number" name="surface_itens"
+                                                                value="{{(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                          ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))}}"
+                                                                class="form-control" style="text-align: right;"
+                                                                #subject="ngModel" [(ngModel)]="feature.surface_itens"
+                                                                disabled (change)="addUp('add')">
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <div class="form-group">
+                                                            <label for="surface_total_surfaces">Total de superficies
+                                                                necesarias</label>
+                                                            <div *ngIf="feature.surface_whole=='yes'">
+                                                                <input type="number" name="surface_total_surfaces"
+                                                                    class="form-control" style="text-align: right;"
+                                                                    #subject="ngModel"
+                                                                    value="{{(feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                    ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))| number: '1.0-0')}}"
+                                                                    [(ngModel)]="feature.surface_total_surfaces"
+                                                                    disabled (change)="addUp('add')">
+                                                            </div>
+
+                                                            <div *ngIf="feature.surface_whole!='yes'">
+                                                                <input type="number" name="surface_total_surfaces"
+                                                                    class="form-control" style="text-align: right;"
+                                                                    #subject="ngModel"
+                                                                    value="{{(feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                    ((feature.surface_width/feature.surface_article_width)| number: '1.0-0')))}}"
+                                                                    [(ngModel)]="feature.surface_total_surfaces"
+                                                                    disabled>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="feature.surface_article_height>feature.surface_height ||
+                                                            feature.surface_article_width>feature.surface_width">
+                                                    <p class="text-warning">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            fill="currentColor" class="bi bi-exclamation-triangle-fill"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                                                        </svg>
+                                                        El artículo, es más grande que la superficie <br> serán
+                                                        necesarias varias
+                                                        superficies para crear un artículo.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="card text-center">
+                                            <h3 class="card-header">
+                                                <b>Costes</b>
+                                            </h3>
+                                            <div class="card-body">
+                                                <div class="d-flex flex-row justify-content-center">
+                                                    <div class="p-2 mr-3">
+                                                        <div class="form-group">
+                                                            <label for="surface_surcharge_item">Coste de recargo por
+                                                                artículo</label>
+                                                            <div class="input-group mb-3">
+                                                                <input type="number" aria-describedby="basic-addon2"
+                                                                    style="text-align: right;"
+                                                                    name="surface_surcharge_item" class="form-control"
+                                                                    #subject="ngModel"
+                                                                    [(ngModel)]="feature.surface_surcharge_item"
+                                                                    (change)="addUp('add')">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text" id="basic-addon2"
+                                                                        style="background-color: white;">{{user.coin}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <div class="form-group">
+                                                            <label for="surface_individual_cost">Coste de una
+                                                                superficie</label>
+                                                            <div class="input-group mb-3">
+                                                                <input type="number" aria-describedby="basic-addon2"
+                                                                    style="text-align: right;"
+                                                                    name="surface_individual_cost" class="form-control"
+                                                                    #subject="ngModel" (change)="addUp('add')"
+                                                                    [(ngModel)]="feature.surface_individual_cost">
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text" id="basic-addon2"
+                                                                        style="background-color: white;">{{user.coin}}</span>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+
+                                        <div class="d-flex flex-wrap">
+                                            <div class="flex-grow-2 bd-highlight">
+                                                <div class="form-group">
+                                                    <label for="surface_costprice">Coste</label>
+                                                    <div class="input-group mb-3">
+
+                                                        <div *ngIf="feature.surface_whole=='yes'">
+                                                            <div *ngIf="feature.surface_multiple_amount==null">
+                                                                <input type="number" name="surface_costprice"
+                                                                    (change)="addUp('add')" class="form-control"
+                                                                    style="text-align: right;" #subject="ngModel"
+                                                                    aria-describedby="basic-addon2"
+                                                                    value="{{(feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))| number: '1.0-0')))}}"
+                                                                    [(ngModel)]="feature.surface_costprice" disabled>
+                                                            </div>
+
+                                                            <div *ngIf="feature.surface_multiple_amount!=null">
+                                                                <input type="number" name="surface_costprice"
+                                                                    (change)="addUp('add')" class="form-control"
+                                                                    style="text-align: right;" #subject="ngModel"
+                                                                    aria-describedby="basic-addon2"
+                                                                    value="{{(feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost/feature.surface_multiple_amount)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))| number: '1.0-0')))}}"
+                                                                    [(ngModel)]="feature.surface_costprice" disabled>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="feature.surface_whole!='yes'">
+                                                            <div *ngIf="feature.surface_multiple_amount==null">
+                                                                <input type="number" name="surface_costprice"
+                                                                    (change)="addUp('add')" class="form-control"
+                                                                    style="text-align: right;" #subject="ngModel"
+                                                                    aria-describedby="basic-addon2"
+                                                                    value="{{(feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0')))))}}"
+                                                                    [(ngModel)]="feature.surface_costprice" disabled>
+                                                            </div>
+
+                                                            <div *ngIf="feature.surface_multiple_amount!=null">
+                                                                <input type="number" name="surface_costprice"
+                                                                    (change)="addUp('add')" class="form-control"
+                                                                    style="text-align: right;" #subject="ngModel"
+                                                                    aria-describedby="basic-addon2"
+                                                                    value="{{(feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost/feature.surface_multiple_amount)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0')))))}}"
+                                                                    [(ngModel)]="feature.surface_costprice" disabled>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text"
+                                                                id="basic-addon2">{{user.coin}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-grow-2 bd-highlight ml-md-2">
+                                                <div class="form-group">
+                                                    <label for="surface_profitpercentage">Porcentaje de beneficio
+                                                        (%)</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="surface_profitpercentage"
+                                                            class="form-control" style="text-align: right;"
+                                                            (change)="addUp('add')" #subject="ngModel"
+                                                            aria-describedby="basic-addon2"
+                                                            [(ngModel)]="feature.surface_profitpercentage">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2"
+                                                                style="background-color: white;">%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-grow-2 bd-highlight ml-md-2">
+                                                <div class="form-group">
+                                                    <label for="surface_price">Total</label>
+                                                    <div class="input-group mb-3">
+
+                                                        <div *ngIf="feature.surface_whole=='yes'">
+                                                            <div *ngIf="feature.surface_multiple_amount==null">
+                                                                <input type="number" name="surface_price"
+                                                                    (change)="addUp('add')" class="add form-control"
+                                                                    #subject="ngModel" aria-describedby="basic-addon2"
+                                                                    style="text-align: right;"
+                                                                    value="{{((feature.surface_profitpercentage*((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))| number: '1.0-0')))))/100)+((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))| number: '1.0-0'))))}}"
+                                                                    [(ngModel)]="feature.surface_price">
+                                                            </div>
+
+                                                            <div *ngIf="feature.surface_multiple_amount!=null">
+                                                                <input type="number" name="surface_price"
+                                                                    (change)="addUp('add')" class="add form-control"
+                                                                    #subject="ngModel" aria-describedby="basic-addon2"
+                                                                    style="text-align: right;"
+                                                                    value="{{((feature.surface_profitpercentage*((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost/feature.surface_multiple_amount)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))| number: '1.0-0')))))/100)+((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost/feature.surface_multiple_amount)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))| number: '1.0-0'))))}}"
+                                                                    [(ngModel)]="feature.surface_price">
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="feature.surface_whole!='yes'">
+                                                            <div *ngIf="feature.surface_multiple_amount==null">
+                                                                <input type="number" name="surface_price"
+                                                                    (change)="addUp('add')" class="add form-control"
+                                                                    #subject="ngModel" aria-describedby="basic-addon2"
+                                                                    style="text-align: right;"
+                                                                    value="{{((feature.surface_profitpercentage*((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0')))))))/100)+((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))))))}}"
+                                                                    [(ngModel)]="feature.surface_price">
+                                                            </div>
+
+                                                            <div *ngIf="feature.surface_multiple_amount!=null">
+                                                                <input type="number" name="surface_price"
+                                                                    (change)="addUp('add')" class="add form-control"
+                                                                    #subject="ngModel" aria-describedby="basic-addon2"
+                                                                    style="text-align: right;"
+                                                                    value="{{((feature.surface_profitpercentage*((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost/feature.surface_multiple_amount)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0')))))))/100)+((feature.surface_surcharge_item*feature.unit_amount)
+                                                                        +((feature.surface_individual_cost/feature.surface_multiple_amount)*((feature.unit_amount/(((feature.surface_height/feature.surface_article_height)| number: '1.0-0')*
+                                                                        ((feature.surface_width/feature.surface_article_width)| number: '1.0-0'))))))}}"
+                                                                    [(ngModel)]="feature.surface_price">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text"
+                                                                id="basic-addon2">{{user.coin}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="text-right">
+
+                                <button name="UPDATE" class="btn btn-warning btn-sm ml-2" data-toggle="modal"
+                                    [attr.data-target]="'#updateFeature'+feature.id" (click)="updateFeature({
+                                    'id':feature.id,
+                                    'user_id':feature.user_id,
+                                    'article_id':feature.article_id,	
+                                    'name':feature.name,
+                                    'description':feature.description,
+                                    'unit_amount':feature.unit_amount,
+                                    'unit_measurement':feature.unit_measurement,
+                                    'unit_costprice':feature.unit_costprice,
+                                    'unit_profitpercentage':feature.unit_profitpercentage,
+                                    'unit_price':feature.unit_price,
+                                    'surface_multiple':feature.surface_multiple,
+                                    'surface_multiple_amount':feature.surface_multiple_amount,
+                                    'surface_height':feature.surface_height,
+                                    'surface_width':feature.surface_width,
+                                    'surface_layout':feature.surface_layout,
+                                    'surface_article_height':feature.surface_article_height,
+                                    'surface_article_width':feature.surface_article_width,
+                                    'surface_article_layout':feature.surface_article_layout,
+                                    'surface_itens':feature.surface_itens,
+                                    'surface_total_surfaces':feature.surface_total_surfaces,
+                                    'surface_whole':feature.surface_whole,
+                                    'surface_surcharge_item':feature.surface_surcharge_item,
+                                    'surface_individual_cost':feature.surface_individual_cost,
+                                    'surface_costprice':feature.surface_costprice,
+                                    'surface_profitpercentage':feature.surface_profitpercentage,
+                                    'surface_price':feature.surface_price,
+                                    'coil_width':feature.coil_width,
+                                    'coil_article_height':feature.coil_article_height,
+                                    'coil_article_width':feature.coil_article_width,
+                                    'coil_article_layout':feature.coil_article_layout,
+                                    'coil_articles_amount':feature.coil_articles_amount,
+                                    'coil_total_measure':feature.coil_total_measure,
+                                    'coil_surcharge_item':feature.coil_surcharge_item,
+                                    'coil_measured_cost':feature.coil_measured_cost,
+                                    'coil_costprice':feature.coil_costprice,
+                                    'coil_profitpercentage':feature.coil_profitpercentage,
+                                    'coil_price':feature.coil_price
+
+                                })"> Guardar Cambios para este artículo
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-save-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v7.793L4.854 6.646a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0-.708-.708L8.5 9.293V1.5z" />
+                                    </svg>
+                                </button>
+
+                                <button name="DELETE" class="btn btn-danger btn-sm ml-2" data-toggle="modal"
+                                    [attr.data-target]="'#deleteFeature'+feature.id"> Borrar de la lista
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="modal" id="{{'deleteFeature'+ feature.id}}" tabindex="-1"
+                                aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Eliminar Elemento</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Estás a punto de eliminar permanentemente el elemento:
+                                            <b>{{feature.name}}</b>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                No deseo eliminar
+                                            </button>
+                                            <form #deleteArticleForm="ngForm"
+                                                (ngSubmit)="deleteFeature(deleteFeatureForm)">
+                                                <button class="btn btn-danger mt-3 form-group" data-dismiss="modal"
+                                                    data-backdrop="false" type="button"
+                                                    (click)="deleteFeature(feature)">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="feature.coil_width">
+                            <form #newelementCOILForm="ngForm" (ngSubmit)="onSubmit(newelementCOILForm)">
+
+                                <div class="d-flex flex-wrap">
+                                    <div class="p-2 flex-grow-1 bd-highlight">
+                                        <div class="form-group">
+                                            <label for="name">Nombre <small *ngIf="newelementCOILForm.invalid"
+                                                    class="text-danger">(Obligatorio)</small></label>
+                                            <input type="text" name="nombre" class="form-control" #subject="ngModel"
+                                                [(ngModel)]="feature.name" required>
+                                            <small *ngIf="!subject.valid && subject.touched"
+                                                class="invalid-feedback d-block">
+                                                Es necesario poner un nombre valido
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="description">Descripción</label>
+                                            <textarea rows="5" name="descripcion" class="form-control"
+                                                #subject="ngModel" [(ngModel)]="feature.description"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="p-2 flex-fill bd-highlight ml-md-5">
+                                        <div class="d-flex flex-wrap">
+                                            <div class="flex-grow-2 bd-highlight">
+                                                <div class="form-group">
+                                                    <label for="surface_amount">Cantidad de artículos</label>
+                                                    <input type="number" name="surface_amount" class="form-control"
+                                                        #subject="ngModel" style="text-align: right;"
+                                                        (change)="addUp('add')" [(ngModel)]="feature.unit_amount">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="d-flex flex-wrap">
+                                            <div class="card text-center">
+                                                <h3 class="card-header">
+                                                    <b>Tamaño de la Bobina</b>
+                                                </h3>
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row justify-content-center">
+                                                        <div class="p-2 mr-3">
+                                                            <div class="form-group">
+                                                                <label for="coil_width">Ancho de la bobina <small
+                                                                        *ngIf="newelementCOILForm.invalid"
+                                                                        class="text-danger">(Obligatorio)</small></label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="number" aria-describedby="basic-addon2"
+                                                                        name="coil_width" class="form-control"
+                                                                        (change)="addUp('add')" #cwidth="ngModel"
+                                                                        style="text-align: right;"
+                                                                        [(ngModel)]="feature.coil_width" required
+                                                                        disabled>
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text" id="basic-addon2"
+                                                                            style="background-color: white;">{{feature.unit_measurement}}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <small *ngIf="!cwidth.valid && cwidth.touched"
+                                                                    class="invalid-feedback d-block">
+                                                                    Campo obligatorio
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="d-flex flex-wrap">
+                                            <div class="card text-center">
+                                                <h3 class="card-header">
+                                                    <b>Tamaño del Artículo</b>
+                                                </h3>
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row justify-content-center">
+                                                        <div class="p-2 mr-3">
+                                                            <div class="form-group">
+                                                                <label for="coil_article_width">Ancho del
+                                                                    Artículo</label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="number" aria-describedby="basic-addon2"
+                                                                        name="coil_article_width" class="form-control"
+                                                                        #subject="ngModel" style="text-align: right;"
+                                                                        (change)="addUp('add')"
+                                                                        [(ngModel)]="feature.coil_article_width">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text" id="basic-addon2"
+                                                                            style="background-color: white;">{{feature.unit_measurement}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="p-2">
+                                                            <div class="form-group">
+                                                                <label for="coil_height">Alto del Artículo</label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="number" aria-describedby="basic-addon2"
+                                                                        (change)="addUp('add')"
+                                                                        style="text-align: right;"
+                                                                        name="coil_article_height" class="form-control"
+                                                                        #subject="ngModel"
+                                                                        [(ngModel)]="feature.coil_article_height">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text" id="basic-addon2"
+                                                                            style="background-color: white;">{{feature.unit_measurement}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="d-flex flex-wrap">
+                                            <div class="card text-center">
+                                                <h3 class="card-header">
+                                                    <b>Resultado del calculo de superficie</b>
+                                                </h3>
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row justify-content-center">
+                                                        <div class="p-2">
+                                                            <div class="form-group">
+                                                                <label for="coil_total_measure">Total de bobina a
+                                                                    utilizar</label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="number" aria-describedby="basic-addon2"
+                                                                        style="text-align: right;"
+                                                                        (change)="addUp('add')"
+                                                                        name="coil_total_measure" class="form-control"
+                                                                        #subject="ngModel"
+                                                                        value="{{(feature.coil_article_height*((feature.unit_amount/((feature.coil_width/feature.coil_article_width)| number: '1.0-0')| number: '1.0-0')))}}"
+                                                                        [(ngModel)]="feature.coil_total_measure"
+                                                                        disabled>
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text" id="basic-addon2"
+                                                                            style="background-color: white;">{{feature.unit_measurement}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="d-flex flex-wrap">
+                                            <div class="card text-center">
+                                                <h3 class="card-header">
+                                                    <b>Costes</b>
+                                                </h3>
+                                                <div class="card-body">
+                                                    <div class="d-flex flex-row justify-content-center">
+                                                        <div class="p-2 mr-3">
+                                                            <div class="form-group">
+                                                                <label for="coil_surcharge_item">Coste de recargo por
+                                                                    artículo</label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="number" aria-describedby="basic-addon2"
+                                                                        style="text-align: right;"
+                                                                        (change)="addUp('add')"
+                                                                        name="coil_surcharge_item" class="form-control"
+                                                                        #subject="ngModel"
+                                                                        [(ngModel)]="feature.coil_surcharge_item">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text" id="basic-addon2"
+                                                                            style="background-color: white;">{{user.coin}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="p-2">
+                                                            <div class="form-group">
+                                                                <label for="coil_measured_cost">Coste por medida de la
+                                                                    bobina</label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="number" aria-describedby="basic-addon2"
+                                                                        style="text-align: right;"
+                                                                        (change)="addUp('add')"
+                                                                        name="coil_measured_cost" class="form-control"
+                                                                        #subject="ngModel"
+                                                                        [(ngModel)]="feature.coil_measured_cost">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text" id="basic-addon2"
+                                                                            style="background-color: white;">{{user.coin}}/{{feature.unit_measurement}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="d-flex flex-wrap">
+                                            <div class="flex-grow-2 bd-highlight">
+                                                <div class="form-group">
+                                                    <label for="surface_costprice">Coste</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="surface_costprice"
+                                                            (change)="addUp('add')" class="form-control"
+                                                            style="text-align: right;" #subject="ngModel"
+                                                            aria-describedby="basic-addon2"
+                                                            [(ngModel)]="feature.coil_costprice" value="{{(feature.coil_surcharge_item*feature.unit_amount)+
+                                                                      (feature.coil_measured_cost*((feature.coil_article_height*
+                                                                      ((feature.unit_amount/((feature.coil_width/feature.coil_article_width)
+                                                                      | number: '1.0-0')| number: '1.0-0')))))}}"
+                                                            disabled>
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text"
+                                                                id="basic-addon2">{{user.coin}}</span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-grow-2 bd-highlight ml-md-2">
+                                                <div class="form-group">
+                                                    <label for="surface_profitpercentage">Porcentaje de beneficio
+                                                        (%)</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="surface_profitpercentage"
+                                                            class="form-control" style="text-align: right;"
+                                                            (change)="addUp('add')" #subject="ngModel"
+                                                            aria-describedby="basic-addon2"
+                                                            [(ngModel)]="feature.coil_profitpercentage">
+
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2"
+                                                                style="background-color: white;">%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-grow-2 bd-highlight ml-md-2">
+                                                <div class="form-group">
+                                                    <label for="surface_price">Total</label>
+                                                    <div class="input-group mb-3">
+                                                        <input type="number" name="surface_price"
+                                                            class="add form-control" #subject="ngModel"
+                                                            aria-describedby="basic-addon2"
+                                                            value="{{((feature.coil_surcharge_item*feature.unit_amount)+
+                                                                      (feature.coil_measured_cost*((feature.coil_article_height*
+                                                                      ((feature.unit_amount/((feature.coil_width/feature.coil_article_width)
+                                                                      | number: '1.0-0')| number: '1.0-0'))))))+((feature.coil_profitpercentage*((feature.coil_surcharge_item*feature.unit_amount)+
+                                                                      (feature.coil_measured_cost*((feature.coil_article_height*
+                                                                      ((feature.unit_amount/((feature.coil_width/feature.coil_article_width)
+                                                                      | number: '1.0-0')| number: '1.0-0')))))))/100)}}" style="text-align: right;"
+                                                            [(ngModel)]="feature.coil_price" (change)="addUp('add')">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2"
+                                                                style="background-color: white;">{{user.coin}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="text-right">
+                                <button name="UPDATE" class="btn btn-warning btn-sm ml-2" data-toggle="modal"
+                                    [attr.data-target]="'#updateFeature'+feature.id" (click)="updateFeature({
+                                    'id':feature.id,
+                                    'user_id':feature.user_id,
+                                    'article_id':feature.article_id,		
+                                    'name':feature.name,
+                                    'description':feature.description,
+                                    'unit_amount':feature.unit_amount,
+                                    'unit_measurement':feature.unit_measurement,
+                                    'unit_costprice':feature.unit_costprice,
+                                    'unit_profitpercentage':feature.unit_profitpercentage,
+                                    'unit_price':feature.unit_price,
+                                    'surface_multiple':feature.surface_multiple,
+                                    'surface_multiple_amount':feature.surface_multiple_amount,
+                                    'surface_height':feature.surface_height,
+                                    'surface_width':feature.surface_width,
+                                    'surface_layout':feature.surface_layout,
+                                    'surface_article_height':feature.surface_article_height,
+                                    'surface_article_width':feature.surface_article_width,
+                                    'surface_article_layout':feature.surface_article_layout,
+                                    'surface_itens':feature.surface_itens,
+                                    'surface_total_surfaces':feature.surface_total_surfaces,
+                                    'surface_whole':feature.surface_whole,
+                                    'surface_surcharge_item':feature.surface_surcharge_item,
+                                    'surface_individual_cost':feature.surface_individual_cost,
+                                    'surface_costprice':feature.surface_costprice,
+                                    'surface_profitpercentage':feature.surface_profitpercentage,
+                                    'surface_price':feature.surface_price,
+                                    'coil_width':feature.coil_width,
+                                    'coil_article_height':feature.coil_article_height,
+                                    'coil_article_width':feature.coil_article_width,
+                                    'coil_article_layout':feature.coil_article_layout,
+                                    'coil_articles_amount':feature.coil_articles_amount,
+                                    'coil_total_measure':feature.coil_total_measure,
+                                    'coil_surcharge_item':feature.coil_surcharge_item,
+                                    'coil_measured_cost':feature.coil_measured_cost,
+                                    'coil_costprice':feature.coil_costprice,
+                                    'coil_profitpercentage':feature.coil_profitpercentage,
+                                    'coil_price':feature.coil_price
+
+                                })"> Guardar Cambios para este artículo
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-save-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v7.793L4.854 6.646a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0-.708-.708L8.5 9.293V1.5z" />
+                                    </svg>
+                                </button>
+
+
+                                <button name="DELETE" class="btn btn-danger btn-sm ml-2" data-toggle="modal"
+                                    [attr.data-target]="'#deleteFeature'+feature.id"> Borrar de la lista
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="modal" id="{{'deleteFeature'+ feature.id}}" tabindex="-1"
+                                aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Eliminar Elemento</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Estás a punto de eliminar permanentemente el elemento:
+                                            <b>{{feature.name}}</b>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                No deseo eliminar
+                                            </button>
+                                            <form #deleteArticleForm="ngForm"
+                                                (ngSubmit)="deleteFeature(deleteFeatureForm)">
+                                                <button class="btn btn-danger mt-3 form-group" data-dismiss="modal"
+                                                    data-backdrop="false" type="button"
+                                                    (click)="deleteFeature(feature)">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </div>
+
+
+        <!----DETALLE DEL ARTICULO---------------------------------------------------------->
+        <div class="p-1 col-sm-6 col-md-3">
+            <div class="card">
+                <div class="card-header text-center" style="font-size: large;">
+                    Añadir a Presupuesto
+                </div>
+                <div class="card-body">
+                    <form #newROWForm="ngForm" (ngSubmit)="onSubmit(newROWForm)">
+                        <div class="form-group">
+                            <label for="row_amount">Cantidad</label>
+                            <div class="input-group mb-3">
+                                <input type="number" name="row_amount" class="form-control" #uamount="ngModel"
+                                    [(ngModel)]="row.amount" aria-describedby="basic-addon2" style="text-align: right;">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2"
+                                        style="background-color: white;">Und.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="row_name">Nombre <small *ngIf="newROWForm.invalid"
+                                    class="text-danger">(Obligatorio)</small></label>
+                            <input type="text" name="row_nombre" class="form-control" #subject="ngModel"
+                                [(ngModel)]="row.name" required>
+                            <small *ngIf="!subject.valid && subject.touched" class="invalid-feedback d-block">
+                                Es necesario poner un nombre valido
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="row_description">Descripción</label>
+                            <textarea rows="3" name="row_descripcion" class="form-control" #subject="ngModel"
+                                [(ngModel)]="row.description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="row_price">Importe Base</label>
+                            <div class="input-group mb-3">
+                                <input type="number" name="row_price" class="form-control" #subject="ngModel"
+                                    aria-describedby="basic-addon2" [(ngModel)]="row.price" style="text-align: right;"
+                                    (change)="addUp('add')" disabled>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2">{{user.coin}}</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="row_tax">Descuento o recargo extra <br>
+                                    <small>(Los valores negativos se aplicaran como descuentos)</small>
+                                </label>
+                                <div class="input-group mb-3">
+                                    <input type="number" name="row_tax" class="form-control" #subject="ngModel"
+                                        style="text-align: right;" value="0" [(ngModel)]="row.tax"
+                                        aria-describedby="basic-addon2" (change)="addUp('add')">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2"
+                                            style="background-color: white;">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="row_total">Importe Total</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" name="row_total" class="form-control" #subject="ngModel"
+                                        value="{{row.amount * row.total}}" [(ngModel)]="row.total"
+                                        aria-describedby="basic-addon2" style="text-align: right;" disabled>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2">{{user.coin}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="submit" class="btn btn-success btn-lg btn-block"
+                            value="{{(loading) ? 'Cargando.....' : 'Añadir a presupuesto'}}"
+                            [disabled]="newROWForm.invalid">
+
+                        <div *ngIf="id_budguet && !loading" class="mt-2 text-center">
+                            Artículo añadido a:
+                            <div class="nav-item">
+                                <button type="button" class="nav-item  btn btn-dark btn-sm pl-1 pr-1"
+                                (click)="budguetLink()">
+                                    Entrar en: 
+                                    {{budguet.name}}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

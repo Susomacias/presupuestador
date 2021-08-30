@@ -1,0 +1,68 @@
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 20px;">
+        <div>
+            <h1>{{page_title}}</h1>
+            <p *ngIf="status != 'success'">
+                Crear un articulo
+            </p>
+
+            <div class="alert alert-success" *ngIf="status == 'success'">
+                El artículo ha sido creado correctamente
+                Añade Materiales y procesos a este artículo. 
+                <a [routerLink]="['/articulos']">Listado de Articulos</a>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="status=='error'">
+                El mensaje no se ha enviado.
+            </div>
+
+            <!--Formulario de contacto-->
+            <form #newarticleForm="ngForm" (ngSubmit)="onSubmit(newarticleForm)">
+                <div>
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Selecciona un departamento</mat-label>
+                        <input type="text" matInput [formControl]="ControlDepartments" [matAutocomplete]="autoDepartment"
+                            [(ngModel)]="article.department_id">
+                        <mat-autocomplete #autoDepartment="matAutocomplete" [displayWith]="displayDepartments.bind(this)">
+                            <mat-option *ngFor="let department of filteredDepartments | async" [value]="department.id">
+                                {{department.name}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Selecciona una Categoría</mat-label>
+                        <input type="text" matInput [formControl]="ControlCategories" [matAutocomplete]="autoCategory"
+                            [(ngModel)]="article.category_id">
+                            <mat-autocomplete #autoCategory="matAutocomplete" [displayWith]="displayCategories.bind(this)">
+                                <mat-option *ngFor="let category of filteredCategories | async" [value]="category.id">
+                                    {{category.name}}
+                                </mat-option>
+                            </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+
+
+
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" name="nombre" class="form-control" #subject="ngModel" [(ngModel)]="article.name"
+                        required>
+                    <small class="text-secondary"><i>Ejemplos: Instalación, Pintura o Cambio de ruedas</i></small>
+                    <small *ngIf="!subject.valid && subject.touched" class="invalid-feedback d-block">
+                        Es necesario poner un nombre valido
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción (opcional)</label>
+                    <textarea rows="5" name="descripcion" class="form-control" #subject="ngModel"
+                        [(ngModel)]="article.description"></textarea>
+                </div>
+
+                <input type="submit" value="Enviar" class="btn btn-success" [disabled]="newarticleForm.invalid" />
+            </form>
+        </div>
+    </div>
+</div>

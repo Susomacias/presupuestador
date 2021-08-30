@@ -1,0 +1,77 @@
+<div class="container">
+    <div class="justify-content-center" style="margin-top: 20px;">
+        <div>
+            <h1>{{page_title}}</h1>
+            <p *ngIf="status != 'success'">
+                Añadir un cliente
+            </p>
+
+            <div class="alert alert-success" *ngIf="status == 'success'">
+                Cliente creado correctamente. <a [routerLink]="['/home']"> Volver a Inicio</a>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="status=='error'">
+                El mensaje no se ha enviado.
+            </div>
+
+            <!--Formulario de contacto-->
+            <form #newclientForm="ngForm" (ngSubmit)="onSubmit(newclientForm)">
+
+                    <div class="d-flex flex-wrap">
+                        <div class="p-2 flex-fill bd-highlight">
+                            <div class="form-group">
+                                <label for="NAME">Nombre</label>
+                                <input type="text" name="name"class="form-control" #name="ngModel" [(ngModel)]="
+                                client.name" required>
+                                <small *ngIf="!name.valid && name.touched" class="invalid-feedback d-block">
+                                    El nombre no es válido
+                                </small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="EMAIL">Email</label>
+                                <input type="email" name="email" class="form-control"
+                                #email="ngModel" [(ngModel)]="
+                                client.email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+                                <small *ngIf="!email.valid && email.touched" class="invalid-feedback d-block">
+                                    El correo no es válido
+                                </small>
+                            </div>
+            
+                            <div class="form-group">
+                                <label for="PHONE">Teléfono</label>
+                                <input type="tel" name="phone" class="form-control"
+                                #phone="ngModel" [(ngModel)]="
+                                client.phone" pattern="[0-9]+">
+                            </div>
+            
+                            <div class="form-group">
+                                <label for="ADDRESS">Dirección</label>
+                                <textarea type="text" name="address" class="form-control"
+                                #address="ngModel" [(ngModel)]="client.address" >
+                                </textarea>
+                            </div>
+                        </div>
+                    
+                        <div class="p-2 flex-fill bd-highlight">
+                            <div class="form-group">
+                                <label for="DATA">Datos Fiscales</label>
+                                <textarea type="text" name="data" class="form-control"
+                                #address="ngModel" [(ngModel)]="client.data" >
+                                </textarea>
+                            </div>
+            
+                            <div class="form-group">
+                                <label for="OBSERVATIONS">Observaciones</label>
+                                <textarea type="text" name="observations" class="form-control"
+                                #observations="ngModel" [(ngModel)]="client.observations" >
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                <input type="submit" value="Enviar" class="btn btn-success" [disabled]="newclientForm.invalid" />
+            </form>
+        </div>
+    </div>
+</div>
+

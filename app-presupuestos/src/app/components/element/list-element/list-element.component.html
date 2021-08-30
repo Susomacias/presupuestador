@@ -1,0 +1,210 @@
+<div class="container">
+
+<div class="d-flex bg-secondary border-dark border-bottom border-right text-white p-2 mt-2 d-flex flex-wrap">
+    <div class="ml-3 mr-auto">
+        <p class="h5 mt-2 mb-auto">MATERIALES Y PROCESOS</p>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-dark ml-2  mt-auto mb-auto" data-toggle="modal" data-target="#elementModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg"
+                viewBox="0 0 16 16">
+                <path d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2H9v6a1 1 0 1 1-2 0V9H1a1 1 0 0 1 0-2h6V1a1 1 0 0 1 1-1z" />
+            </svg>
+        </button>
+
+        <div class="modal fade"  id="elementModal" tabindex="-1" aria-labelledby="elementModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:lightgray;">
+                        <p class="modal-title text-dark" id="elementModalLabel">Cear Nuevo Material o proceso</p>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-dark" style="background-color:lightgray;">
+                        <app-new-element></app-new-element>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            (click)="getElements()">Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!elements">
+    <br>
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
+    <br>
+    <div class="d-flex justify-content-center">
+        <p>Cargando elementos...</p>
+    </div>
+</div>
+
+
+<div *ngIf="elements && elements.length == 0">
+    <br>
+    <div class="d-flex justify-content-center alert alert-danger" role="alert">
+        No hay materiales y procesos disponibles.
+    </div>
+
+    <div class="d-flex justify-content-center">
+        Comienza creando un nuevo material o proceso.
+    </div>
+
+    <small class="d-flex justify-content-center">
+        Ejemplo:&nbsp;<i>Diseño de estructura</i>
+    </small>
+    <br>
+    <div class="d-flex justify-content-center">
+        <button class="btn btn-primary" [routerLink]="['/nuevo-elemento']">
+            NUEVO MATERIAL O PROCESO
+        </button>
+    </div>
+</div>
+
+<div *ngIf="elements">
+    <div class="d-flex bg-light text-dark mt-2 border-secondary border-bottom border-right d-flex flex-wrap" *ngFor="let element of elements">
+
+        <div class="ml-3 mt-3 bd-highlight">
+            <p class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" #name>
+                {{element.name}}
+        </p>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <div class="dropdown-item"><small>{{element.description}}</small></div>
+            </div>
+        </div>
+        <div class="ml-auto p-2 bd-highlight">
+
+            <button name="OPEN" class="btn btn-info btn-sm ml-2" [routerLink]="['/detalle-elemento/', element.id]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-folder2-open pb-1 mt-0" viewBox="0 0 16 16">
+                    <path
+                        d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z" />
+                </svg>
+            </button>
+
+            <button name="EDIT" class="btn btn-warning  btn-sm ml-2" data-toggle="modal"
+                [attr.data-target]="'#editModal'+element.id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path
+                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path fill-rule="evenodd"
+                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                </svg>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="{{'editModal'+ element.id}}" tabindex="-1" aria-labelledby="editModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Editar Elemento</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Puedes actualizar los datos de los elementos: <b>{{element.name}}</b>
+
+                            <div class="d-flex flex-column bd-highlight mb-3 mt-2">
+                                <div>
+
+                                    <!--Formulario-->
+                                    <form #updatepartmentForm="ngForm"
+                                        (ngSubmit)="updateElement(updateelementForm)">
+
+                                        <div class="form-group">
+                                            <label for="name">Nombre</label>
+                                            <input type="text" name="nombre" class="form-control" #subject="ngModel"
+                                                value="{{element.name}}" [(ngModel)]="element.name" required>
+                                            <small *ngIf="!subject.valid && subject.touched"
+                                                class="invalid-feedback d-block">
+                                                Es necesario poner un nombre valido
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="description">Descripción (opcional)</label>
+                                            <textarea rows="5" name="descripcion" class="form-control"
+                                                #subject="ngModel" [(ngModel)]="element.description"
+                                                value="{{element.description}}"></textarea>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end">
+                                            <button class="btn btn-secondary mt-2 mb-3 ml-2"
+                                                data-dismiss="modal">Cerrar</button>
+
+                                            <button class="btn btn-danger mt-2 ml-2 form-group" data-dismiss="modal"
+                                                data-backdrop="false" type="submit"
+                                                (click)="updateElement(element)">
+                                                Actualizar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button name="DELETE" class="btn btn-danger btn-sm ml-2" data-toggle="modal"
+                [attr.data-target]="'#deleteModal'+element.id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-trash-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                </svg>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal" id="{{'deleteModal'+ element.id}}" tabindex="-1" aria-labelledby="deleteModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Eliminar elemento</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Estás a punto de eliminar permanentemente el elemento: <b>{{element.name}}</b>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No deseo
+                                eliminar
+                            </button>
+                            <form #deleteElementForm="ngForm" (ngSubmit)="deleteElement(deleteElementForm)">
+                                <button class="btn btn-danger mt-3 form-group" data-dismiss="modal"
+                                    data-backdrop="false" type="button" (click)="deleteElement(element)">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="loading == true">
+    <div class="spinner-border spinner-border-sm" role="status">
+        <span class="sr-only">Actualizando materiales y procesos...</span>
+    </div>
+   <small class="text-muted ml-1">Actualizando materiales y procesos...</small> 
+</div>
+
+</div>
+
+

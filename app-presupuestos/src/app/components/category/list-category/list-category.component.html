@@ -1,0 +1,233 @@
+<div class="container">
+<div class="d-flex bg-secondary border-dark border-bottom border-right text-white p-2 mt-2 d-flex flex-wrap">
+    <div class="ml-3 mr-auto">
+        <p class="h5 mt-2 mb-auto">CATEGORIAS</p>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-dark ml-2  mt-auto mb-auto" data-toggle="modal" data-target="#createcategoryModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg"
+                viewBox="0 0 16 16">
+                <path d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2H9v6a1 1 0 1 1-2 0V9H1a1 1 0 0 1 0-2h6V1a1 1 0 0 1 1-1z" />
+            </svg>
+        </button>
+
+        <div class="modal fade" id="createcategoryModal" tabindex="-1" aria-labelledby="createcategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-dark" id="createModalLabel">Cear Nueva Categoría</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-dark">
+                        <app-new-category></app-new-category>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            (click)="getCategories()">Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!categories">
+    <br>
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
+    <br>
+    <div class="d-flex justify-content-center">
+        <p>Cargando categorias...</p>
+    </div>
+</div>
+
+<div *ngIf="categories==(0)">
+    <br>
+    <div class="d-flex justify-content-center alert alert-danger" role="alert">
+        No hay categorias disponibles.
+    </div>
+
+    <div class="d-flex justify-content-center">
+        Comienza creando una nueva categoría
+    </div>
+
+    <small class="d-flex justify-content-center">
+        Ejemplo:&nbsp;<i>Reparación de motor</i>
+    </small>
+    <br>
+    <div class="d-flex justify-content-center">
+        <button class="btn btn-primary" [routerLink]="['/nueva-categoria']">
+            NUEVA CATEGORÍA
+        </button>
+    </div>
+</div>
+
+<div *ngIf="categories">
+    <div class="d-flex bg-light text-dark mt-2 border-secondary border-bottom border-right d-flex flex-wrap" *ngFor="let category of categories">
+        <div class="bd-highlight mt-auto mb-auto">
+            <div *ngIf="category.favorite=='not'" >
+                <form  #favoritecategoryForm="ngForm" (ngSubmit)="updateCategories(favoritecategoryForm)">
+                    <button class="btn btn-light text-secondary form-group" style="margin-bottom: 0px;" type="button"
+                        (click)="updateCategories({'id':category.id, 'user_id':category.user_id,'department_id':category.department_id, 'name':category.name, 'description':category.description, 'favorite':'yes'})">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+                            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                          </svg>
+                    </button>
+                </form>
+            </div>
+
+            <div *ngIf="category.favorite=='yes'">
+                    <button class="btn btn-light mb-0 text-warning form-group" type="button"
+                        (click)="updateCategories({'id':category.id, 'user_id':category.user_id,'department_id':category.department_id, 'name':category.name, 'description':category.description, 'favorite':'not'})">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                          </svg>
+                    </button>
+            </div>
+        </div>
+        <div class="mt-3 bd-highlight">
+            <p class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false" #name>
+                {{category.name}}
+             </p>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <div class="dropdown-item"><small>{{category.description}}</small></div>
+            </div>
+        </div>
+        <div class="ml-auto p-2 bd-highlight">
+
+            <button name="OPEN" class="btn btn-info ml-2 btn-sm" [routerLink]="['/contenido-categoria/', category.id]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-folder2-open pb-1 mt-0" viewBox="0 0 16 16">
+                    <path
+                        d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z" />
+                </svg>
+            </button>
+
+            <button name="EDIT" class="btn btn-warning btn-sm ml-2" data-toggle="modal"
+                [attr.data-target]="'#editModal'+category.id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path
+                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path fill-rule="evenodd"
+                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                </svg>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="{{'editModal'+ category.id}}" tabindex="-1" aria-labelledby="editModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Editar Categoría</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Puedes actualizar los datos de la categoría: <b>{{category.name}}</b>
+
+                            <div class="d-flex flex-column bd-highlight mb-3 mt-2">
+                                <div>
+
+                                    <!--Formulario-->
+                                    <form #updatecategoryForm="ngForm"
+                                        (ngSubmit)="updateCategories(updatecategoryForm)">
+
+                                        <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Departamento</label>
+                                        <select  class="custom-select my-1 mr-sm-2 form-control" id="inlineFormCustomSelectPref" name="departamento"  #subject="ngModel" [(ngModel)]="category.department_id">
+                                          <option selected>Ninguno</option>
+                                          <option *ngFor="let department of departments" value="{{department.id}}">
+                                            {{department.name}}
+                                          </option>
+                                        </select>
+
+                                        <div class="form-group">
+                                            <label for="name">Nombre</label>
+                                            <input type="text" name="nombre" class="form-control" #subject="ngModel"
+                                                value="{{category.name}}" [(ngModel)]="category.name" required>
+                                            <small *ngIf="!subject.valid && subject.touched"
+                                                class="invalid-feedback d-block">
+                                                Es necesario poner un nombre valido
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="description">Descripción (opcional)</label>
+                                            <textarea rows="5" name="descripcion" class="form-control"
+                                                #subject="ngModel" [(ngModel)]="category.description"
+                                                value="{{category.description}}"></textarea>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end">
+                                            <button class="btn btn-secondary mt-2 mb-3 ml-2"
+                                                data-dismiss="modal">Cerrar</button>
+
+                                            <button class="btn btn-danger mt-2 ml-2 form-group" data-dismiss="modal"
+                                                data-backdrop="false" type="submit"
+                                                (click)="updateCategories(category)">
+                                                Actualizar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button name="DELETE" class="btn btn-danger btn-sm ml-2" data-toggle="modal"
+                [attr.data-target]="'#deleteModal'+category.id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-trash-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                </svg>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal" id="{{'deleteModal'+ category.id}}" tabindex="-1" aria-labelledby="deleteModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Eliminar Categoría</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Estás a punto de eliminar permanentemente la categoría: <b>{{category.name}}</b>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                No deseo eliminar
+                            </button>
+                            <form #deleteCategoryForm="ngForm" (ngSubmit)="deleteCategory(deleteCategoryForm)">
+                                <button class="btn btn-danger mt-3 form-group" data-dismiss="modal"
+                                    data-backdrop="false" type="button" (click)="deleteCategory(category)">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="loading == true">
+    <div class="spinner-border spinner-border-sm" role="status">
+        <span class="sr-only">Actualizando Categorías...</span>
+    </div>
+   <small class="text-muted">Actualizando Categorías...</small> 
+</div>
+</div>

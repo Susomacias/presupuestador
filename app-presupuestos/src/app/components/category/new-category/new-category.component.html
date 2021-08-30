@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 20px;">
+        <div>
+            <h1>{{page_title}}</h1>
+            <p *ngIf="status != 'success'">
+                Crear una categoría
+            </p>
+
+            <div class="alert alert-success" *ngIf="status == 'success'">
+                Categoría creada correctamente. <a [routerLink]="['/home']"> Volver a Inicio</a>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="status=='error'">
+                El mensaje no se ha enviado.
+            </div>
+
+            <!--Formulario de contacto-->
+            <form #newcategoryForm="ngForm" (ngSubmit)="onSubmit(newcategoryForm)">
+                <div class="form-group">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                        <mat-label>Selecciona un departamento</mat-label>
+                        <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" [(ngModel)]="category.department_id">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCompany.bind(this)">
+                          <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id">
+                            {{option.name}}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>   
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" name="nombre"  class="form-control" #subject="ngModel" 
+                    [(ngModel)]="category.name" required>
+                    <small class="text-secondary"><i>Ejemplos: Cañerías, Pintado de fachada o Instalación de Puertas</i></small>
+                    <small *ngIf="!subject.valid && subject.touched" class="invalid-feedback d-block">
+                        Es necesario poner un nombre valido
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción (opcional)</label>
+                    <textarea rows="5" name="descripcion" class="form-control" #subject="ngModel" 
+                    [(ngModel)]="category.description"></textarea>
+                </div>
+
+                <input type="submit" value="Enviar" class="btn btn-success" [disabled]="newcategoryForm.invalid" />
+            </form>
+        </div>
+    </div>
+</div>

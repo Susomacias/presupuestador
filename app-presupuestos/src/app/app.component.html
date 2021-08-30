@@ -1,0 +1,169 @@
+<div *ngIf="!user">
+  <nav class="navbar navbar-expand-lg  fixed-top navbar-dark bg-dark">
+    <a class="navbar-brand"  [routerLink]="['']">Hacerpresupuesto.com</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <button type="button" (click)="coverDisable()" class="nav-item active btn btn-outline-dark btn-sm pl-1 pr-1 mr-2"
+            [routerLink]="['/login']">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+              class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd"
+                d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z" />
+              <path fill-rule="evenodd"
+                d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+            </svg>
+            Identificate</button>
+        </li>
+        <li class="nav-item">
+          <button type="button" (click)="coverDisable()" class="nav-item active btn btn-outline-light btn-sm"
+            [routerLink]="['/registro']">Registrate</button>
+        </li>
+      </ul>
+
+    </div>
+
+  </nav>
+</div>
+
+<div *ngIf="user" class="fixed-top ">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" [routerLink]="['']">Hacerpresupuesto.com</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+
+        <li class="nav-item active m-1">
+          <a class="navbar-brand" [routerLink]="['']"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
+              <path
+                d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z" />
+            </svg></a>
+        </li>
+        <li class="nav-item active dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+              class="bi bi-folder2-open" viewBox="0 0 16 16">
+              <path
+                d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14V3.5zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5V6zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7H1.633z" />
+            </svg>
+            Archivo
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" [routerLink]="['/departamentos']">Departamentos</a>
+            <a class="dropdown-item" [routerLink]="['/categorias']">Categorías</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" [routerLink]="['/articulos']">Artículos</a>
+            <a class="dropdown-item" [routerLink]="['/elementos']">Materiales y Proceso</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" [routerLink]="['/clientes']">Clientes</a>
+            <a class="dropdown-item" [routerLink]="['/presupuestos']">Presupuestos</a>
+          </div>
+        </li>
+
+        <li class="nav-item active dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+              class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
+              <path
+                d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z" />
+              <path
+                d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z" />
+            </svg>
+            Nuevo
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" [routerLink]="['/nuevo-departamento']">Departamento</a>
+            <a class="dropdown-item" [routerLink]="['/nueva-categoria']">Categoría</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" [routerLink]="['/nuevo-articulo']">Artículo</a>
+            <a class="dropdown-item" [routerLink]="['/nuevo-elemento']">Material o Proceso</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" [routerLink]="['/nuevo-cliente']">Cliente</a>
+            <a class="dropdown-item" [routerLink]="['/nuevo-presupuesto']">Presupuesto</a>
+          </div>
+        </li>
+
+      </ul>
+      <div *ngIf="budguet && budguet.name">
+        <ul class="navbar-nav ml-auto mr-3">
+          <li class="nav-item">
+            <button type="button" class="nav-item  btn btn-dark btn-sm pl-1 pr-1 mr-2" (click)="budguetLink()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24 " height="24 " fill="currentColor"
+                class="bi bi-card-list" viewBox="0 0 16 16">
+                <path
+                  d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+                <path
+                  d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z" />
+              </svg>
+              {{budguet.name}}
+
+              <span class="badge badge-light" style="font-size: 16px;">
+                <div *ngIf="rows_budguet">{{rowQuantity}}</div>
+                <div *ngIf="!rows_budguet">0</div>
+              </span>
+            </button>
+
+          </li>
+        </ul>
+      </div>
+
+      <ul class="navbar-nav ml-auto mr-3">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <img src="{{avatar}}" width="30" height="30" class="avatar_nav mr-1" /> {{user.name}}
+          </a>
+          <div class="dropdown-menu mr-5" aria-labelledby="navbarDropdown">
+            <div >
+              <a class="dropdown-item" [routerLink]="['/ajustes']">Ajustes de usuario</a>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" [routerLink]="['/logout/1']">Salir</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+
+
+
+<div class="mt-5 pt-2">
+
+  <router-outlet></router-outlet>
+</div>
+
+
+
+<div *ngIf="user">
+  <footer class="container-fluid mt-5">
+    <div class="row p-3 bg-dark text-white">
+      <div class="mx-auto text-center">
+        <a class="text-white  m-2" [routerLink]="['politica-de-privacidad']">Politica de privacidad</a>
+        <button type="button" class="btn btn-outline-light btn-rounded m-2" [routerLink]="['contacto']">
+          Contactar con el equipo de desarrollo
+        </button>
+      </div>
+    </div>
+    <div class="row p-3 mb-2 bg-secondary text-white">
+      <div class="mx-auto text-center">
+        <a class="text-white" [routerLink]="['/home']">Hacerpresupuesto.com</a>
+      </div>
+    </div>
+  </footer>
+</div>
